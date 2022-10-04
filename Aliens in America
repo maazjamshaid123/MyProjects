@@ -1,0 +1,68 @@
+#Importing Packages
+import pandas as pd
+import streamlit as st
+import plotly.express as px
+import plotly.io as pio
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("Aliens of America - aliens.csv")
+df2 = pd.read_csv("Aliens of America - details.csv")
+df1 = pd.read_csv("Aliens of America - location.csv")
+
+pio.templates.default = "plotly"
+st.set_page_config(page_title = 'ALIENS IN AMERICA',layout="wide")
+col1, col2, col3 = st.columns(3)
+with col2:
+    st.title('ALIENS IN AMERICA DASHBOARD')
+#########PIE CHART############
+df = df.sort_values(by=['first_name'])
+df = df.loc[:, df.columns != 'id']
+df.reset_index(drop=True, inplace=True)
+
+col11, col12 = st.columns(2)
+with col11:
+    st.write(df)
+with col12:
+    types = df['type'].value_counts()
+    labels = df['type'].unique().tolist()
+    fig = px.pie( types, labels,color = labels,width=500, height=500,hole=.5)
+    fig.update_layout(title=('<b>Types of Aliens</b>'),title_font_size=30 )
+    st.write(fig)
+#########H.BAR CHART############
+gender_count = df['gender'].value_counts()
+gender = df['gender'].unique().tolist()
+fig = px.bar(df, x= gender_count, y = gender, orientation='h', width=1000, height=400,color=gender)
+fig.update_yaxes(ticklabelposition="inside top",showgrid=True)
+fig.update_xaxes(showgrid=True)
+fig.update_layout(title=('<b>Gender Distribution</b>'), title_font_size=30,legend_title = "<b>Gender<b>",showlegend=False)
+st.write(fig)
+#########SIDE BAR##############
+with st.sidebar:
+    col21, col22, col23 = st.columns(3)
+    with col21:
+        st.metric(label="TOTAL ALIENS", value="50,000")
+        st.metric(label="TYPES OF ALIENS", value="5")
+        agg = st.button("AGGRESSIVE")
+        if agg:
+            st.code("24947")
+        nonagg = st.button("NON-AGGRESSIVE")
+        if nonagg:
+            st.code("25053")
+        st.metric(label="YOUNGEST BIRTH YEAR", value="1672")
+        st.metric(label="OLDEST BIRTH YEAR", value="1972")
+    with col22:
+        st.metric(label="YOUNGEST ALIEN", value="50")
+        st.metric(label="OLDEST ALIEN", value="350")
+#########DATA FRAME OCCUPATION##############
+col31, col32 = st.columns(2)
+with col31:
+    st.subheader("Occupation Distribution")
+    dff1 = df1["occupation"].value_counts()
+    st.write(dff1)
+with col32:
+    st.metric(label="Lowest Population of Aliens", value="Vermont")
+    st.metric(label="Highest Population of Aliens", value="Texas")
+    st.metric(label="Most Common Occupation Among Aliens", value="VP Quality Control (474)")
+    st.metric(label="Least Common Occupation Among Aliens", value="Human Resources Assistant I (84)")
